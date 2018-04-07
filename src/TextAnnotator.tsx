@@ -32,6 +32,34 @@ const splitWithOffsets = (text, offsets: {start: number; end: number}[]) => {
   return splits
 }
 
+const Mark = props => (
+  <mark
+    style={{backgroundColor: props.mark ? '#84d2ff' : null, padding: '0 4px'}}
+    data-start={props.start}
+    data-end={props.end}
+    onClick={() => props.onClick({start: props.start, end: props.end})}
+  >
+    {props.content}
+    <span style={{fontSize: '0.7em', fontWeight: 500, marginLeft: 6}}>
+      PERSON
+    </span>
+  </mark>
+)
+
+const Split = props => {
+  if (props.mark) return <Mark {...props} />
+
+  return (
+    <span
+      data-start={props.start}
+      data-end={props.end}
+      onClick={() => props.onClick({start: props.start, end: props.end})}
+    >
+      {props.content}
+    </span>
+  )
+}
+
 export interface TextAnnotatorProps {
   style: object
   content: string
@@ -61,20 +89,44 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
 
   handleMouseUp = () => {
     const selection = window.getSelection()
+
+    let position = selection.anchorNode.compareDocumentPosition(
+      selection.focusNode
+    )
+    if (position === 0 && selection.focusOffset === selection.anchorOffset)
+      return
+    let backward = false
+    // position == 0 if nodes are the same
+    if (
+      (!position && selection.anchorOffset > selection.focusOffset) ||
+      position === Node.DOCUMENT_POSITION_PRECEDING
+    )
+      backward = true
+
     console.log(selection)
-    const start =
+
+    let start =
       parseInt(
         selection.anchorNode.parentElement.getAttribute('data-start'),
         10
       ) + selection.anchorOffset
-    const end =
+    let end =
       parseInt(
         selection.focusNode.parentElement.getAttribute('data-start'),
         10
       ) + selection.focusOffset
+
+    if (backward) {
+      ;[start, end] = [end, start]
+    }
+
     console.log(start, end)
     this.props.onChange(this.props.value.concat({start, end}))
     window.getSelection().empty()
+  }
+
+  handleSplitClick = ({start, end}) => {
+    console.log('click', start, end)
   }
 
   render() {
@@ -83,14 +135,11 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
     return (
       <div style={style} ref={this.rootRef}>
         {splits.map(split => (
-          <span
-            style={{backgroundColor: split.mark ? '#84d2ff' : null}}
+          <Split
             key={`${split.start}-${split.end}`}
-            data-start={split.start}
-            data-end={split.end}
-          >
-            {split.content}
-          </span>
+            {...split}
+            onClick={this.handleSplitClick}
+          />
         ))}
       </div>
     )

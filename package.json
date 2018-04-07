@@ -1,7 +1,8 @@
 {
-  "name": "frontend",
+  "name": "react-annotate-text",
   "version": "0.1.0",
-  "private": true,
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "dependencies": {
     "@types/react": "^16.3.1",
     "@types/react-dom": "^16.0.4",
@@ -30,7 +31,9 @@
     "webpack-dev-server": "^3.1.1"
   },
   "scripts": {
-    "dev": "webpack-dev-server --hot --history-api-fallback --mode development",
-    "build": "NODE_ENV=production webpack --mode production"
+    "dev":
+      "cd example && webpack-dev-server --hot --history-api-fallback --mode development",
+    "build": "NODE_ENV=production webpack --mode production",
+    "prepublishOnly": "tsc -p ./ --declaration --outDir lib/"
   }
 }

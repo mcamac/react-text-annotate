@@ -1,23 +1,13 @@
 import * as React from 'react'
 import {hot} from 'react-hot-loader'
 
-import TextAnnotator from './TextAnnotator'
-
-const Home = () => (
-  <div>
-    <div>
-      <h2>Welcome to React</h2>
-    </div>
-    <p>HMR works!</p>
-  </div>
-)
+import TextAnnotator from '../../src'
 
 const TEXT = `On Friday, former President Park Geun-hye joined their number as a court sentenced her to 24 years, more than a year after she was impeached and removed from office over an influence-peddling scandal.`
 
 class App extends React.Component<any, any> {
   state = {
-    // value: [{start: 3, end: 9}],
-    value: [],
+    value: [{start: 28, end: 41}],
   }
 
   handleChange = value => {
