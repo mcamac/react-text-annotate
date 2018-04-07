@@ -34,15 +34,17 @@ const splitWithOffsets = (text, offsets: {start: number; end: number}[]) => {
 
 const Mark = props => (
   <mark
-    style={{backgroundColor: props.mark ? '#84d2ff' : null, padding: '0 4px'}}
+    style={{backgroundColor: props.color || '#84d2ff', padding: '0 4px'}}
     data-start={props.start}
     data-end={props.end}
     onClick={() => props.onClick({start: props.start, end: props.end})}
   >
     {props.content}
-    <span style={{fontSize: '0.7em', fontWeight: 500, marginLeft: 6}}>
-      PERSON
-    </span>
+    {props.tag && (
+      <span style={{fontSize: '0.7em', fontWeight: 500, marginLeft: 6}}>
+        {props.tag}
+      </span>
+    )}
   </mark>
 )
 
@@ -65,6 +67,7 @@ export interface TextAnnotatorProps {
   content: string
   value: any[]
   onChange: (any) => any
+  getSpan?: (any) => any
 
   // determine whether to overwrite or leave intersecting ranges.
 }
@@ -121,12 +124,21 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
     }
 
     console.log(start, end)
-    this.props.onChange(this.props.value.concat({start, end}))
+    this.props.onChange(
+      this.props.value.concat(
+        this.getSpan({start, end, text: this.props.content.slice(start, end)})
+      )
+    )
     window.getSelection().empty()
   }
 
   handleSplitClick = ({start, end}) => {
     console.log('click', start, end)
+  }
+
+  getSpan = span => {
+    if (this.props.getSpan) return this.props.getSpan(span)
+    return span
   }
 
   render() {

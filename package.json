@@ -33,7 +33,6 @@
   "scripts": {
     "dev":
       "cd example && webpack-dev-server --hot --history-api-fallback --mode development",
-    "build": "NODE_ENV=production webpack --mode production",
-    "prepublishOnly": "tsc -p ./ --declaration --outDir lib/"
+    "build": "rm -rf lib && tsc -p ./ --declaration --outDir lib/"
   }
 }
