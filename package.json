@@ -1,5 +1,5 @@
 {
-  "name": "react-annotate-text",
+  "name": "react-text-annotate",
   "version": "0.0.1",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -34,8 +34,7 @@
     "webpack-dev-server": "^3.1.1"
   },
   "scripts": {
-    "dev":
-      "cd example && webpack-dev-server --hot --history-api-fallback --mode development",
+    "dev": "cd example && webpack-dev-server --hot --history-api-fallback --mode development",
     "build": "rm -rf lib && tsc -p ./ --declaration --outDir lib/",
     "predeploy": "cd example && webpack --mode production",
     "deploy": "cd example && gh-pages -d dist"
