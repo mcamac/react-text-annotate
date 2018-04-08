@@ -28,22 +28,34 @@ class App extends React.Component<any, any> {
     return (
       <div style={{padding: 24, fontFamily: 'IBM Plex Sans'}}>
         <h3 style={{marginTop: 0}}>react-text-annotate</h3>
-        <select onChange={this.handleTagChange} value={this.state.tag}>
-          <option value="ORG">ORG</option>
-          <option value="PERSON">PERSON</option>
-        </select>
-        <TextAnnotator
-          style={{fontFamily: 'IBM Plex Sans', maxWidth: 500, lineHeight: 1.5}}
-          content={TEXT}
-          value={this.state.value}
-          onChange={this.handleChange}
-          getSpan={span => ({
-            ...span,
-            tag: this.state.tag,
-            color: TAG_COLORS[this.state.tag],
-          })}
-        />
-        <pre>{JSON.stringify(this.state.value, null, 2)}</pre>
+        <div
+          style={{
+            boxShadow: '0 2px 4px rgba(0,0,0,.1)',
+            maxWidth: 500,
+            padding: 16,
+          }}
+        >
+          <select onChange={this.handleTagChange} value={this.state.tag}>
+            <option value="ORG">ORG</option>
+            <option value="PERSON">PERSON</option>
+          </select>
+          <TextAnnotator
+            style={{
+              fontFamily: 'IBM Plex Sans',
+              maxWidth: 500,
+              lineHeight: 1.5,
+            }}
+            content={TEXT}
+            value={this.state.value}
+            onChange={this.handleChange}
+            getSpan={span => ({
+              ...span,
+              tag: this.state.tag,
+              color: TAG_COLORS[this.state.tag],
+            })}
+          />
+          <pre>{JSON.stringify(this.state.value, null, 2)}</pre>
+        </div>
       </div>
     )
   }
