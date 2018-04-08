@@ -28,6 +28,7 @@ class App extends React.Component<any, any> {
     return (
       <div style={{padding: 24, fontFamily: 'IBM Plex Sans'}}>
         <h3 style={{marginTop: 0}}>react-text-annotate</h3>
+        <p>A React component for interactively highilighting parts of text.</p>
         <div
           style={{
             boxShadow: '0 2px 4px rgba(0,0,0,.1)',
