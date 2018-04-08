@@ -1,11 +1,7 @@
 import * as React from 'react'
 
 import Mark from './Mark'
-import {
-  selectionIsEmpty,
-  selectionIsBackwards,
-  splitTokensWithOffsets,
-} from './utils'
+import {selectionIsEmpty, selectionIsBackwards, splitTokensWithOffsets} from './utils'
 
 interface TokenProps {
   i: number
@@ -44,6 +40,8 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
   }
 
   handleMouseUp = () => {
+    if (!this.props.onChange) return
+
     const selection = window.getSelection()
 
     if (selectionIsEmpty(selection)) return
@@ -56,14 +54,8 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
       return false
     }
 
-    let start = parseInt(
-      selection.anchorNode.parentElement.getAttribute('data-i'),
-      10
-    )
-    let end = parseInt(
-      selection.focusNode.parentElement.getAttribute('data-i'),
-      10
-    )
+    let start = parseInt(selection.anchorNode.parentElement.getAttribute('data-i'), 10)
+    let end = parseInt(selection.focusNode.parentElement.getAttribute('data-i'), 10)
 
     if (selectionIsBackwards(selection)) {
       ;[start, end] = [end, start]
@@ -80,9 +72,7 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
 
   handleSplitClick = ({start, end}) => {
     // Find and remove the matching split.
-    const splitIndex = this.props.value.findIndex(
-      s => s.start === start && s.end === end
-    )
+    const splitIndex = this.props.value.findIndex(s => s.start === start && s.end === end)
     if (splitIndex >= 0) {
       this.props.onChange([
         ...this.props.value.slice(0, splitIndex),

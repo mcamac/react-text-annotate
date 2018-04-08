@@ -45,20 +45,18 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
   }
 
   handleMouseUp = () => {
+    if (!this.props.onChange) return
+
     const selection = window.getSelection()
 
     if (selectionIsEmpty(selection)) return
 
     let start =
-      parseInt(
-        selection.anchorNode.parentElement.getAttribute('data-start'),
-        10
-      ) + selection.anchorOffset
+      parseInt(selection.anchorNode.parentElement.getAttribute('data-start'), 10) +
+      selection.anchorOffset
     let end =
-      parseInt(
-        selection.focusNode.parentElement.getAttribute('data-start'),
-        10
-      ) + selection.focusOffset
+      parseInt(selection.focusNode.parentElement.getAttribute('data-start'), 10) +
+      selection.focusOffset
 
     if (selectionIsBackwards(selection)) {
       ;[start, end] = [end, start]
@@ -74,9 +72,7 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
 
   handleSplitClick = ({start, end}) => {
     // Find and remove the matching split.
-    const splitIndex = this.props.value.findIndex(
-      s => s.start === start && s.end === end
-    )
+    const splitIndex = this.props.value.findIndex(s => s.start === start && s.end === end)
     if (splitIndex >= 0) {
       this.props.onChange([
         ...this.props.value.slice(0, splitIndex),
@@ -96,11 +92,7 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
     return (
       <div style={style} ref={this.rootRef}>
         {splits.map(split => (
-          <Split
-            key={`${split.start}-${split.end}`}
-            {...split}
-            onClick={this.handleSplitClick}
-          />
+          <Split key={`${split.start}-${split.end}`} {...split} onClick={this.handleSplitClick} />
         ))}
       </div>
     )
