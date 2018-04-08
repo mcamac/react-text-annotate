@@ -1,9 +1,9 @@
 import * as React from 'react'
 import {hot} from 'react-hot-loader'
 
-import TextAnnotator from '../../src'
+import {TextAnnotator, TokenAnnotator} from '../../src'
 
-const TEXT = `On Friday, former President Park Geun-hye joined their number as a court sentenced her to 24 years, more than a year after she was impeached and removed from office over an influence-peddling scandal.`
+const TEXT = `On Monday night , Mr. Fallon will have a co-host for the first time : The rapper Cardi B , who just released her first album, " Invasion of Privacy . "`
 
 const TAG_COLORS = {
   ORG: '#00ffa2',
@@ -12,8 +12,8 @@ const TAG_COLORS = {
 
 class App extends React.Component<any, any> {
   state = {
-    value: [{start: 28, end: 41, tag: 'PERSON', text: 'Park Geun-hye'}],
-    tag: 'ORG',
+    value: [{start: 17, end: 19, tag: 'PERSON'}],
+    tag: 'PERSON',
   }
 
   handleChange = value => {
@@ -28,7 +28,7 @@ class App extends React.Component<any, any> {
     return (
       <div style={{padding: 24, fontFamily: 'IBM Plex Sans'}}>
         <h3 style={{marginTop: 0}}>react-text-annotate</h3>
-        <p>A React component for interactively highilighting parts of text.</p>
+        <p>A React component for interactively highlighting parts of text.</p>
         <div
           style={{
             boxShadow: '0 2px 4px rgba(0,0,0,.1)',
@@ -40,13 +40,13 @@ class App extends React.Component<any, any> {
             <option value="ORG">ORG</option>
             <option value="PERSON">PERSON</option>
           </select>
-          <TextAnnotator
+          <TokenAnnotator
             style={{
               fontFamily: 'IBM Plex Sans',
               maxWidth: 500,
               lineHeight: 1.5,
             }}
-            content={TEXT}
+            tokens={TEXT.split(' ')}
             value={this.state.value}
             onChange={this.handleChange}
             getSpan={span => ({

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
+  "homepage": "https://mcamac.github.io/react-text-annotate",
   "dependencies": {
     "@types/react": "^16.3.1",
     "@types/react-dom": "^16.0.4",
@@ -21,6 +22,8 @@
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.11",
     "fork-ts-checker-webpack-plugin": "^0.4.1",
+    "gh-pages": "^1.1.0",
+    "html-webpack-plugin": "^3.2.0",
     "prettier": "^1.11.1",
     "react-hot-loader": "^4.0.1",
     "style-loader": "^0.20.3",
@@ -33,6 +36,8 @@
   "scripts": {
     "dev":
       "cd example && webpack-dev-server --hot --history-api-fallback --mode development",
-    "build": "rm -rf lib && tsc -p ./ --declaration --outDir lib/"
+    "build": "rm -rf lib && tsc -p ./ --declaration --outDir lib/",
+    "predeploy": "cd example && webpack --mode production",
+    "deploy": "cd example && gh-pages -d dist"
   }
 }

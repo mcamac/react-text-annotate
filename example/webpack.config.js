@@ -2,6 +2,7 @@ const webpack = require('webpack')
 const path = require('path')
 
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   devtool: 'source-map',
@@ -11,7 +12,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: '[name].js',
-    publicPath: '/',
+    publicPath: '',
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
@@ -27,5 +28,10 @@ module.exports = {
       },
     ],
   },
-  plugins: [new ForkTsCheckerWebpackPlugin()],
+  plugins: [
+    new ForkTsCheckerWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'react-text-annotate',
+    }),
+  ],
 }

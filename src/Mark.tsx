@@ -1,6 +1,15 @@
 import * as React from 'react'
 
-const Mark = props => (
+export interface MarkProps {
+  content: string
+  start: number
+  end: number
+  tag: string
+  color?: string
+  onClick: (any) => any
+}
+
+const Mark: React.SFC<MarkProps> = props => (
   <mark
     style={{backgroundColor: props.color || '#84d2ff', padding: '0 4px'}}
     data-start={props.start}

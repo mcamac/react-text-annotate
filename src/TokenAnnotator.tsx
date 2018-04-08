@@ -1,25 +1,24 @@
 import * as React from 'react'
 
 import Mark from './Mark'
-import {selectionIsEmpty, selectionIsBackwards, splitWithOffsets} from './utils'
+import {
+  selectionIsEmpty,
+  selectionIsBackwards,
+  splitTokensWithOffsets,
+} from './utils'
 
-const Split = props => {
-  if (props.mark) return <Mark {...props} />
-
-  return (
-    <span
-      data-start={props.start}
-      data-end={props.end}
-      onClick={() => props.onClick({start: props.start, end: props.end})}
-    >
-      {props.content}
-    </span>
-  )
+interface TokenProps {
+  i: number
+  content: string
 }
 
-export interface TextAnnotatorProps {
+const Token: React.SFC<TokenProps> = props => {
+  return <span data-i={props.i}>{props.content} </span>
+}
+
+export interface TokenAnnotatorProps {
   style: object
-  content: string
+  tokens: string[]
   value: any[]
   onChange: (any) => any
   getSpan?: (any) => any
@@ -27,7 +26,7 @@ export interface TextAnnotatorProps {
 }
 
 // TODO: When React 16.3 types are ready, remove casts.
-class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
+class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
   rootRef: any
 
   constructor(props) {
@@ -49,26 +48,33 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
 
     if (selectionIsEmpty(selection)) return
 
-    let start =
-      parseInt(
-        selection.anchorNode.parentElement.getAttribute('data-start'),
-        10
-      ) + selection.anchorOffset
-    let end =
-      parseInt(
-        selection.focusNode.parentElement.getAttribute('data-start'),
-        10
-      ) + selection.focusOffset
+    if (
+      !selection.anchorNode.parentElement.hasAttribute('data-i') ||
+      !selection.focusNode.parentElement.hasAttribute('data-i')
+    ) {
+      window.getSelection().empty()
+      return false
+    }
+
+    let start = parseInt(
+      selection.anchorNode.parentElement.getAttribute('data-i'),
+      10
+    )
+    let end = parseInt(
+      selection.focusNode.parentElement.getAttribute('data-i'),
+      10
+    )
 
     if (selectionIsBackwards(selection)) {
       ;[start, end] = [end, start]
     }
 
+    end += 1
+
     this.props.onChange([
       ...this.props.value,
-      this.getSpan({start, end, text: this.props.content.slice(start, end)}),
+      this.getSpan({start, end, tokens: this.props.tokens.slice(start, end)}),
     ])
-
     window.getSelection().empty()
   }
 
@@ -91,20 +97,25 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
   }
 
   render() {
-    const {content, value, style} = this.props
-    const splits = splitWithOffsets(content, value)
+    const {tokens, value, style} = this.props
+    const splits = splitTokensWithOffsets(tokens, value)
     return (
       <div style={style} ref={this.rootRef}>
-        {splits.map(split => (
-          <Split
-            key={`${split.start}-${split.end}`}
-            {...split}
-            onClick={this.handleSplitClick}
-          />
-        ))}
+        {splits.map(
+          (split, i) =>
+            split.mark ? (
+              <Mark
+                key={`${split.start}-${split.end}`}
+                {...split}
+                onClick={this.handleSplitClick}
+              />
+            ) : (
+              <Token key={split.i} {...split} />
+            )
+        )}
       </div>
     )
   }
 }
 
-export default TextAnnotator
+export default TokenAnnotator
