@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    // "noImplicitAny": truowe,
     "sourceMap": true,
     "jsx": "react",
     "lib": ["es2016", "dom"]

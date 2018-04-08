@@ -28,6 +28,7 @@ class App extends React.Component<any, any> {
     return (
       <div style={{padding: 24, fontFamily: 'IBM Plex Sans'}}>
         <h3 style={{marginTop: 0}}>react-text-annotate</h3>
+        <a href="https://github.com/mcamac/react-text-annotate">Github</a>
         <p>A React component for interactively highlighting parts of text.</p>
         <div
           style={{
