@@ -84,7 +84,12 @@ class App extends React.Component<any, any> {
                 tag: this.state.tag,
                 color: TAG_COLORS[this.state.tag],
               })}
-              renderMark={(props) => <mark>{props.content} [{props.tag}]</mark>}
+              renderMark={(props) => (
+                <mark
+                  key={props.key}
+                  onClick={() => props.onClick({ start: props.start, end: props.end })}
+                >{props.content} [{props.tag}]</mark>
+              )}
             />
           </Card>
         </div>
