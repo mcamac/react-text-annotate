@@ -10,6 +10,17 @@ const TAG_COLORS = {
   PERSON: '#84d2ff',
 }
 
+const Card = ({ children }) => (
+  <div
+    style={{
+      boxShadow: '0 2px 4px rgba(0,0,0,.1)',
+      margin: 6,
+      maxWidth: 500,
+      padding: 16,
+    }}
+  >{children}</div>
+);
+
 class App extends React.Component<any, any> {
   state = {
     value: [{start: 17, end: 19, tag: 'PERSON'}],
@@ -30,34 +41,57 @@ class App extends React.Component<any, any> {
         <h3 style={{marginTop: 0}}>react-text-annotate</h3>
         <a href="https://github.com/mcamac/react-text-annotate">Github</a>
         <p>A React component for interactively highlighting parts of text.</p>
-        <div
-          style={{
-            boxShadow: '0 2px 4px rgba(0,0,0,.1)',
-            maxWidth: 500,
-            padding: 16,
-          }}
-        >
-          <select onChange={this.handleTagChange} value={this.state.tag}>
-            <option value="ORG">ORG</option>
-            <option value="PERSON">PERSON</option>
-          </select>
-          <TokenAnnotator
-            style={{
-              fontFamily: 'IBM Plex Sans',
-              maxWidth: 500,
-              lineHeight: 1.5,
-            }}
-            tokens={TEXT.split(' ')}
-            value={this.state.value}
-            onChange={this.handleChange}
-            getSpan={span => ({
-              ...span,
-              tag: this.state.tag,
-              color: TAG_COLORS[this.state.tag],
-            })}
-          />
-          <pre>{JSON.stringify(this.state.value, null, 2)}</pre>
+        <div style={{ display: 'flex', marginBottom: 24 }}>
+          <Card>
+            <h4>Default</h4>
+            <select onChange={this.handleTagChange} value={this.state.tag}>
+              <option value="ORG">ORG</option>
+              <option value="PERSON">PERSON</option>
+            </select>
+            <TokenAnnotator
+              style={{
+                fontFamily: 'IBM Plex Sans',
+                maxWidth: 500,
+                lineHeight: 1.5,
+              }}
+              tokens={TEXT.split(' ')}
+              value={this.state.value}
+              onChange={this.handleChange}
+              getSpan={span => ({
+                ...span,
+                tag: this.state.tag,
+                color: TAG_COLORS[this.state.tag],
+              })}
+            />
+          </Card>
+          <Card>
+            <h4>Custom rendered mark</h4>
+            <select onChange={this.handleTagChange} value={this.state.tag}>
+              <option value="ORG">ORG</option>
+              <option value="PERSON">PERSON</option>
+            </select>
+            <TokenAnnotator
+              style={{
+                fontFamily: 'IBM Plex Sans',
+                maxWidth: 500,
+                lineHeight: 1.5,
+              }}
+              tokens={TEXT.split(' ')}
+              value={this.state.value}
+              onChange={this.handleChange}
+              getSpan={span => ({
+                ...span,
+                tag: this.state.tag,
+                color: TAG_COLORS[this.state.tag],
+              })}
+              renderMark={(props) => <mark>{props.content} [{props.tag}]</mark>}
+            />
+          </Card>
         </div>
+        <Card>
+          <h4>Current Value</h4>
+          <pre>{JSON.stringify(this.state.value, null, 2)}</pre>
+        </Card>
       </div>
     )
   }
