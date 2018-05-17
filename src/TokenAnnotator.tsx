@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import Mark from './Mark'
+import Mark, {MarkProps} from './Mark'
 import {selectionIsEmpty, selectionIsBackwards, splitTokensWithOffsets} from './utils'
 
 interface TokenProps {
@@ -18,11 +18,16 @@ export interface TokenAnnotatorProps {
   value: any[]
   onChange: (any) => any
   getSpan?: (any) => any
+  renderMark?: (props: MarkProps) => JSX.Element
   // determine whether to overwrite or leave intersecting ranges.
 }
 
 // TODO: When React 16.3 types are ready, remove casts.
 class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
+  static defaultProps = {
+    renderMark: (props) => <Mark {...props} />,
+  }
+
   rootRef: any
 
   constructor(props) {
@@ -87,19 +92,18 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
   }
 
   render() {
-    const {tokens, value, style} = this.props
+    const {tokens, value, style, renderMark} = this.props
     const splits = splitTokensWithOffsets(tokens, value)
     return (
       <div style={style} ref={this.rootRef}>
         {splits.map(
           (split, i) =>
-            split.mark ? (
-              <Mark
-                key={`${split.start}-${split.end}`}
-                {...split}
-                onClick={this.handleSplitClick}
-              />
-            ) : (
+            split.mark ? renderMark({
+                key: `${split.start}-${split.end}`,
+                ...split,
+                onClick: this.handleSplitClick
+              })
+            : (
               <Token key={split.i} {...split} />
             )
         )}
