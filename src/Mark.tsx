@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 export interface MarkProps {
-  key: string,
+  key: string
   content: string
   start: number
   end: number
@@ -19,9 +19,7 @@ const Mark: React.SFC<MarkProps> = props => (
   >
     {props.content}
     {props.tag && (
-      <span style={{fontSize: '0.7em', fontWeight: 500, marginLeft: 6}}>
-        {props.tag}
-      </span>
+      <span style={{fontSize: '0.7em', fontWeight: 500, marginLeft: 6}}>{props.tag}</span>
     )}
   </mark>
 )

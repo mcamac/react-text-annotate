@@ -10,7 +10,7 @@ const TAG_COLORS = {
   PERSON: '#84d2ff',
 }
 
-const Card = ({ children }) => (
+const Card = ({children}) => (
   <div
     style={{
       boxShadow: '0 2px 4px rgba(0,0,0,.1)',
@@ -18,8 +18,10 @@ const Card = ({ children }) => (
       maxWidth: 500,
       padding: 16,
     }}
-  >{children}</div>
-);
+  >
+    {children}
+  </div>
+)
 
 class App extends React.Component<any, any> {
   state = {
@@ -41,7 +43,7 @@ class App extends React.Component<any, any> {
         <h3 style={{marginTop: 0}}>react-text-annotate</h3>
         <a href="https://github.com/mcamac/react-text-annotate">Github</a>
         <p>A React component for interactively highlighting parts of text.</p>
-        <div style={{ display: 'flex', marginBottom: 24 }}>
+        <div style={{display: 'flex', marginBottom: 24}}>
           <Card>
             <h4>Default</h4>
             <select onChange={this.handleTagChange} value={this.state.tag}>
@@ -84,11 +86,13 @@ class App extends React.Component<any, any> {
                 tag: this.state.tag,
                 color: TAG_COLORS[this.state.tag],
               })}
-              renderMark={(props) => (
+              renderMark={props => (
                 <mark
                   key={props.key}
-                  onClick={() => props.onClick({ start: props.start, end: props.end })}
-                >{props.content} [{props.tag}]</mark>
+                  onClick={() => props.onClick({start: props.start, end: props.end})}
+                >
+                  {props.content} [{props.tag}]
+                </mark>
               )}
             />
           </Card>

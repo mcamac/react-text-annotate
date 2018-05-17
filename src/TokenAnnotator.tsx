@@ -25,7 +25,7 @@ export interface TokenAnnotatorProps {
 // TODO: When React 16.3 types are ready, remove casts.
 class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
   static defaultProps = {
-    renderMark: (props) => <Mark {...props} />,
+    renderMark: props => <Mark {...props} />,
   }
 
   rootRef: any
@@ -98,12 +98,13 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
       <div style={style} ref={this.rootRef}>
         {splits.map(
           (split, i) =>
-            split.mark ? renderMark({
+            split.mark ? (
+              renderMark({
                 key: `${split.start}-${split.end}`,
                 ...split,
-                onClick: this.handleSplitClick
+                onClick: this.handleSplitClick,
               })
-            : (
+            ) : (
               <Token key={split.i} {...split} />
             )
         )}
