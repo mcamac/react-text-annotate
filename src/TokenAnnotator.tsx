@@ -8,18 +8,24 @@ interface TokenProps {
   content: string
 }
 
+interface TokenSpan {
+  start: number
+  end: number
+  tokens: string[]
+}
+
 const Token: React.SFC<TokenProps> = props => {
   return <span data-i={props.i}>{props.content} </span>
 }
 
-export interface TokenAnnotatorProps {
-  style: object
+export interface TokenAnnotatorProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   tokens: string[]
-  value: any[]
-  onChange: (any) => any
-  getSpan?: (any) => any
+  value: TokenSpan[]
+  onChange: (value: TokenSpan[]) => any
+  getSpan?: (span: TokenSpan) => TokenSpan
   renderMark?: (props: MarkProps) => JSX.Element
-  // determine whether to overwrite or leave intersecting ranges.
+  // TODO: determine whether to overwrite or leave intersecting ranges.
 }
 
 // TODO: When React 16.3 types are ready, remove casts.
@@ -28,12 +34,12 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
     renderMark: props => <Mark {...props} />,
   }
 
-  rootRef: any
+  rootRef: React.RefObject<HTMLDivElement>
 
   constructor(props) {
     super(props)
 
-    this.rootRef = (React as any).createRef()
+    this.rootRef = React.createRef()
   }
 
   componentDidMount() {
@@ -86,27 +92,26 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
     }
   }
 
-  getSpan = span => {
+  getSpan = (span: TokenSpan) => {
     if (this.props.getSpan) return this.props.getSpan(span)
     return span
   }
 
   render() {
-    const {tokens, value, style, renderMark} = this.props
+    const {tokens, value, renderMark, onChange, getSpan, ...divProps} = this.props
     const splits = splitTokensWithOffsets(tokens, value)
     return (
-      <div style={style} ref={this.rootRef}>
-        {splits.map(
-          (split, i) =>
-            split.mark ? (
-              renderMark({
-                key: `${split.start}-${split.end}`,
-                ...split,
-                onClick: this.handleSplitClick,
-              })
-            ) : (
-              <Token key={split.i} {...split} />
-            )
+      <div ref={this.rootRef} {...divProps}>
+        {splits.map((split, i) =>
+          split.mark ? (
+            renderMark({
+              key: `${split.start}-${split.end}`,
+              ...split,
+              onClick: this.handleSplitClick,
+            })
+          ) : (
+            <Token key={split.i} {...split} />
+          )
         )}
       </div>
     )

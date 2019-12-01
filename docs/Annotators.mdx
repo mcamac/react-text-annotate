@@ -5,8 +5,84 @@ route: /annotators
 
 # Annotators
 
-import {TokenAnnotatorExample} from './Examples'
+import {Playground, Props} from 'docz'
+import {State} from 'react-powerplug'
+import {TextAnnotator, TokenAnnotator} from '../src'
+import {Card, TEXT, TAG_COLORS} from './Examples'
 
-An example token annotator
+Note: the examples below use the `State` component from [react-powerplug](https://github.com/renatorib/react-powerplug).
 
-<TokenAnnotatorExample />
+## `TokenAnnotator`
+
+Token annotators take a list of tokens, and allow selecting subranges of them.
+
+In the example below, drag or double click to select text. Click on a selected "mark" to deselect.
+
+<Playground>
+  <State initial={{value: [{start: 17, end: 19, tag: 'PERSON'}], tag: 'PERSON'}}>
+{({state, setState}) => (
+  <Card>
+      <select onChange={e => setState({tag: e.target.value})} value={state.tag}>
+        <option value="ORG">ORG</option>
+        <option value="PERSON">PERSON</option>
+      </select>
+      <TokenAnnotator
+        style={{
+          maxWidth: 500,
+          lineHeight: 1.5,
+        }}
+        tokens={TEXT.split(' ')}
+        value={state.value}
+        onChange={value => setState({value})}
+        getSpan={span => ({
+          ...span,
+          tag: state.tag,
+          color: TAG_COLORS[state.tag],
+        })}
+      />
+      <pre style={{fontSize: 12, lineHeight: 1.2}}>
+        {JSON.stringify(state, null, 2)}
+      </pre>
+    </Card>
+)}
+</State>
+</Playground>
+
+
+
+## `TextAnnotator`
+
+Text annotators take a string `content` prop, and allow the selecting of substrings.
+This can be useful for fine-grained text annotation tasks.
+
+In the example below, drag or double click to select text. Click on a selected "mark" to deselect.
+
+<Playground>
+  <State initial={{value: [{start: 18, end: 28, tag: 'PERSON'}], tag: 'PERSON'}}>
+{({state, setState}) => (
+  <Card>
+      <select onChange={e => setState({tag: e.target.value})} value={state.tag}>
+        <option value="ORG">ORG</option>
+        <option value="PERSON">PERSON</option>
+      </select>
+      <TextAnnotator
+        style={{
+          maxWidth: 500,
+          lineHeight: 1.5,
+        }}
+        content={TEXT}
+        value={state.value}
+        onChange={value => setState({value})}
+        getSpan={span => ({
+          ...span,
+          tag: state.tag,
+          color: TAG_COLORS[state.tag],
+        })}
+      />
+       <pre style={{fontSize: 12, lineHeight: 1.2}}>
+        {JSON.stringify(state, null, 2)}
+      </pre>
+    </Card>
+)}
+</State>
+</Playground>

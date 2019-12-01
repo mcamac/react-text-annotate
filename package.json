@@ -27,6 +27,7 @@
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
     "react-hot-loader": "^4.0.1",
+    "react-powerplug": "^1.0.0",
     "typescript": "^3.7.2"
   },
   "scripts": {
