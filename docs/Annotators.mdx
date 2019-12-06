@@ -10,6 +10,17 @@ import {State} from 'react-powerplug'
 import {TextAnnotator, TokenAnnotator} from '../src'
 import {Card, TEXT, TAG_COLORS} from './Examples'
 
+
+```tsx
+import {TokenAnnotator, TextAnnotator} from 'react-text-annotate'
+
+<TokenAnnotator
+  tokens={['My', 'text', 'needs', 'annotating', 'for', 'NLP', 'training']}
+  value={[{start: 5, end: 6, tag: 'TOPIC'}]}
+/>
+```
+
+
 Note: the examples below use the `State` component from [react-powerplug](https://github.com/renatorib/react-powerplug).
 
 ## `TokenAnnotator`
