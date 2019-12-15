@@ -1,10 +1,15 @@
 import * as React from 'react'
 
-import Mark from './Mark'
+import Mark, {MarkProps, MarkWrapper} from './Mark'
 import {selectionIsEmpty, selectionIsBackwards, splitWithOffsets} from './utils'
 
 const Split = props => {
-  if (props.mark) return <Mark {...props} />
+  if (props.mark)
+    return (
+      <MarkWrapper {...props}>
+        {props.renderMark ? props.renderMark(props) : <Mark {...props} />}
+      </MarkWrapper>
+    )
 
   return (
     <span
@@ -29,6 +34,7 @@ export interface TextAnnotatorProps extends Omit<React.HTMLAttributes<HTMLDivEle
   value: TextSpan[]
   onChange: (value: TextSpan[]) => any
   getSpan?: (span: TextSpan) => TextSpan
+  renderMark?: (props: MarkProps) => JSX.Element
   // TODO: determine whether to overwrite or leave intersecting ranges.
 }
 
@@ -92,12 +98,17 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
   }
 
   render() {
-    const {content, value, style} = this.props
+    const {content, value, style, renderMark} = this.props
     const splits = splitWithOffsets(content, value)
     return (
       <div style={style} ref={this.rootRef}>
         {splits.map(split => (
-          <Split key={`${split.start}-${split.end}`} {...split} onClick={this.handleSplitClick} />
+          <Split
+            key={`${split.start}-${split.end}`}
+            {...split}
+            onClick={this.handleSplitClick}
+            renderMark={renderMark}
+          />
         ))}
       </div>
     )

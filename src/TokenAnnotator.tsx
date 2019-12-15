@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import Mark, {MarkProps} from './Mark'
+import {MarkWrapper, MarkProps} from './Mark'
 import {selectionIsEmpty, selectionIsBackwards, splitTokensWithOffsets} from './utils'
 
 interface TokenProps {
@@ -31,7 +31,7 @@ export interface TokenAnnotatorProps
 // TODO: When React 16.3 types are ready, remove casts.
 class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
   static defaultProps = {
-    renderMark: props => <Mark {...props} />,
+    renderMark: props => <MarkWrapper {...props} />,
   }
 
   rootRef: React.RefObject<HTMLDivElement>
