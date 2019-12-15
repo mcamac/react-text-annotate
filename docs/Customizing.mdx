@@ -1,0 +1,46 @@
+---
+name: Customizing Styles
+route: /customizing
+---
+
+# Customizing Styles
+
+import {Playground, Props} from 'docz'
+import {State} from 'react-powerplug'
+import {TextAnnotator, TokenAnnotator} from '../src'
+import {Card, TEXT, TAG_COLORS} from './Examples'
+
+Each annotator takes a `renderMark` prop which can be used to customize how highlights are rendered.
+
+In the example below, drag or double click to select text. Click on a selected "mark" to deselect.
+
+<Playground>
+  <State initial={{value: [{start: 18, end: 28, tag: 'PERSON'}], tag: 'PERSON'}}>
+{({state, setState}) => (
+  <Card>
+      <select onChange={e => setState({tag: e.target.value})} value={state.tag}>
+        <option value="ORG">ORG</option>
+        <option value="PERSON">PERSON</option>
+      </select>
+      <TextAnnotator
+        style={{
+          maxWidth: 500,
+          lineHeight: 1.5,
+        }}
+        content={TEXT}
+        value={state.value}
+        onChange={value => setState({value})}
+        getSpan={span => ({
+          ...span,
+          tag: state.tag,
+          color: TAG_COLORS[state.tag],
+        })}
+        renderMark={props => <span style={{backgroundColor: 'red'}}>{props.content} [{props.tag}]</span>}
+      />
+       <pre style={{fontSize: 12, lineHeight: 1.2}}>
+        {JSON.stringify(state, null, 2)}
+      </pre>
+    </Card>
+)}
+</State>
+</Playground>

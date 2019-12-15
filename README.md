@@ -1,5 +1,7 @@
 # react-text-annotate
 
+![NPM Version](https://img.shields.io/npm/v/react-text-annotate)
+
 A React component for interactively highlighting parts of text.
 
 ## Usage
@@ -18,8 +20,7 @@ A simple controlled annotation.
 
 ```tsx
 import {TokenAnnotator, TextAnnotator} from 'react-text-annotate'
-
-<TokenAnnotator
+;<TokenAnnotator
   tokens={['My', 'text', 'needs', 'annotating', 'for', 'NLP', 'training']}
   value={[{start: 5, end: 6, tag: 'TOPIC', color: '#EEE'}]}
 />
