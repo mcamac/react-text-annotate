@@ -17,23 +17,28 @@ const Split = props => {
   )
 }
 
-export interface TextAnnotatorProps {
-  style: object
-  content: string
-  value: any[]
-  onChange: (any) => any
-  getSpan?: (any) => any
-  // determine whether to overwrite or leave intersecting ranges.
+interface TextSpan {
+  start: number
+  end: number
+  text: string
 }
 
-// TODO: When React 16.3 types are ready, remove casts.
+export interface TextAnnotatorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+  style: object
+  content: string
+  value: TextSpan[]
+  onChange: (value: TextSpan[]) => any
+  getSpan?: (span: TextSpan) => TextSpan
+  // TODO: determine whether to overwrite or leave intersecting ranges.
+}
+
 class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
-  rootRef: any
+  rootRef: React.RefObject<HTMLDivElement>
 
   constructor(props) {
     super(props)
 
-    this.rootRef = (React as any).createRef()
+    this.rootRef = React.createRef()
   }
 
   componentDidMount() {
@@ -81,7 +86,7 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
     }
   }
 
-  getSpan = span => {
+  getSpan = (span: TextSpan) => {
     if (this.props.getSpan) return this.props.getSpan(span)
     return span
   }
