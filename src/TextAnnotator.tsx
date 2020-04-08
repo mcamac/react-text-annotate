@@ -1,7 +1,8 @@
-import * as React from 'react'
+import React from 'react'
 
 import Mark from './Mark'
 import {selectionIsEmpty, selectionIsBackwards, splitWithOffsets} from './utils'
+import {Span} from './span'
 
 const Split = props => {
   if (props.mark) return <Mark {...props} />
@@ -17,40 +18,29 @@ const Split = props => {
   )
 }
 
-interface TextSpan {
-  start: number
-  end: number
+interface TextSpan extends Span {
   text: string
 }
 
-export interface TextAnnotatorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
-  style: object
+type TextBaseProps<T> = {
   content: string
-  value: TextSpan[]
-  onChange: (value: TextSpan[]) => any
-  getSpan?: (span: TextSpan) => TextSpan
+  value: T[]
+  onChange: (value: T[]) => any
+  getSpan?: (span: TextSpan) => T
   // TODO: determine whether to overwrite or leave intersecting ranges.
 }
 
-class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
-  rootRef: React.RefObject<HTMLDivElement>
+type TextAnnotatorProps<T> = React.HTMLAttributes<HTMLDivElement> & TextBaseProps<T>
 
-  constructor(props) {
-    super(props)
-
-    this.rootRef = React.createRef()
+const TextAnnotator = <T extends Span>(props: TextAnnotatorProps<T>) => {
+  const getSpan = (span: TextSpan): T => {
+    // TODO: Better typings here.
+    if (props.getSpan) return props.getSpan(span) as T
+    return {start: span.start, end: span.end} as T
   }
 
-  componentDidMount() {
-    this.rootRef.current.addEventListener('mouseup', this.handleMouseUp)
-  }
-
-  componentWillUnmount() {
-    this.rootRef.current.removeEventListener('mouseup', this.handleMouseUp)
-  }
-
-  handleMouseUp = () => {
-    if (!this.props.onChange) return
+  const handleMouseUp = () => {
+    if (!props.onChange) return
 
     const selection = window.getSelection()
 
@@ -67,41 +57,28 @@ class TextAnnotator extends React.Component<TextAnnotatorProps, {}> {
       ;[start, end] = [end, start]
     }
 
-    this.props.onChange([
-      ...this.props.value,
-      this.getSpan({start, end, text: this.props.content.slice(start, end)}),
-    ])
+    props.onChange([...props.value, getSpan({start, end, text: content.slice(start, end)})])
 
     window.getSelection().empty()
   }
 
-  handleSplitClick = ({start, end}) => {
+  const handleSplitClick = ({start, end}) => {
     // Find and remove the matching split.
-    const splitIndex = this.props.value.findIndex(s => s.start === start && s.end === end)
+    const splitIndex = props.value.findIndex(s => s.start === start && s.end === end)
     if (splitIndex >= 0) {
-      this.props.onChange([
-        ...this.props.value.slice(0, splitIndex),
-        ...this.props.value.slice(splitIndex + 1),
-      ])
+      props.onChange([...props.value.slice(0, splitIndex), ...props.value.slice(splitIndex + 1)])
     }
   }
 
-  getSpan = (span: TextSpan) => {
-    if (this.props.getSpan) return this.props.getSpan(span)
-    return span
-  }
-
-  render() {
-    const {content, value, style} = this.props
-    const splits = splitWithOffsets(content, value)
-    return (
-      <div style={style} ref={this.rootRef}>
-        {splits.map(split => (
-          <Split key={`${split.start}-${split.end}`} {...split} onClick={this.handleSplitClick} />
-        ))}
-      </div>
-    )
-  }
+  const {content, value, style} = props
+  const splits = splitWithOffsets(content, value)
+  return (
+    <div style={style} onMouseUp={handleMouseUp}>
+      {splits.map(split => (
+        <Split key={`${split.start}-${split.end}`} {...split} onClick={handleSplitClick} />
+      ))}
+    </div>
+  )
 }
 
 export default TextAnnotator

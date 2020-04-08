@@ -1,7 +1,8 @@
-import * as React from 'react'
+import React from 'react'
 
 import Mark, {MarkProps} from './Mark'
 import {selectionIsEmpty, selectionIsBackwards, splitTokensWithOffsets} from './utils'
+import {Span} from './span'
 
 interface TokenProps {
   i: number
@@ -18,40 +19,26 @@ const Token: React.SFC<TokenProps> = props => {
   return <span data-i={props.i}>{props.content} </span>
 }
 
-export interface TokenAnnotatorProps
+export interface TokenAnnotatorProps<T>
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   tokens: string[]
-  value: TokenSpan[]
-  onChange: (value: TokenSpan[]) => any
-  getSpan?: (span: TokenSpan) => TokenSpan
+  value: T[]
+  onChange: (value: T[]) => any
+  getSpan?: (span: TokenSpan) => T
   renderMark?: (props: MarkProps) => JSX.Element
   // TODO: determine whether to overwrite or leave intersecting ranges.
 }
 
-// TODO: When React 16.3 types are ready, remove casts.
-class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
-  static defaultProps = {
-    renderMark: props => <Mark {...props} />,
+const TokenAnnotator = <T extends Span>(props: TokenAnnotatorProps<T>) => {
+  const renderMark = props.renderMark || (props => <Mark {...props} />)
+
+  const getSpan = (span: TokenSpan): T => {
+    if (props.getSpan) return props.getSpan(span)
+    return {start: span.start, end: span.end} as T
   }
 
-  rootRef: React.RefObject<HTMLDivElement>
-
-  constructor(props) {
-    super(props)
-
-    this.rootRef = React.createRef()
-  }
-
-  componentDidMount() {
-    this.rootRef.current.addEventListener('mouseup', this.handleMouseUp)
-  }
-
-  componentWillUnmount() {
-    this.rootRef.current.removeEventListener('mouseup', this.handleMouseUp)
-  }
-
-  handleMouseUp = () => {
-    if (!this.props.onChange) return
+  const handleMouseUp = () => {
+    if (!props.onChange) return
 
     const selection = window.getSelection()
 
@@ -74,48 +61,35 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
 
     end += 1
 
-    this.props.onChange([
-      ...this.props.value,
-      this.getSpan({start, end, tokens: this.props.tokens.slice(start, end)}),
-    ])
+    props.onChange([...props.value, getSpan({start, end, tokens: props.tokens.slice(start, end)})])
     window.getSelection().empty()
   }
 
-  handleSplitClick = ({start, end}) => {
+  const handleSplitClick = ({start, end}) => {
     // Find and remove the matching split.
-    const splitIndex = this.props.value.findIndex(s => s.start === start && s.end === end)
+    const splitIndex = props.value.findIndex(s => s.start === start && s.end === end)
     if (splitIndex >= 0) {
-      this.props.onChange([
-        ...this.props.value.slice(0, splitIndex),
-        ...this.props.value.slice(splitIndex + 1),
-      ])
+      props.onChange([...props.value.slice(0, splitIndex), ...props.value.slice(splitIndex + 1)])
     }
   }
 
-  getSpan = (span: TokenSpan) => {
-    if (this.props.getSpan) return this.props.getSpan(span)
-    return span
-  }
-
-  render() {
-    const {tokens, value, renderMark, onChange, getSpan, ...divProps} = this.props
-    const splits = splitTokensWithOffsets(tokens, value)
-    return (
-      <div ref={this.rootRef} {...divProps}>
-        {splits.map((split, i) =>
-          split.mark ? (
-            renderMark({
-              key: `${split.start}-${split.end}`,
-              ...split,
-              onClick: this.handleSplitClick,
-            })
-          ) : (
-            <Token key={split.i} {...split} />
-          )
-        )}
-      </div>
-    )
-  }
+  const {tokens, value, onChange, getSpan: _, ...divProps} = props
+  const splits = splitTokensWithOffsets(tokens, value)
+  return (
+    <div {...divProps} onMouseUp={handleMouseUp}>
+      {splits.map((split, i) =>
+        split.mark ? (
+          renderMark({
+            key: `${split.start}-${split.end}`,
+            ...split,
+            onClick: handleSplitClick,
+          })
+        ) : (
+          <Token key={split.i} {...split} />
+        )
+      )}
+    </div>
+  )
 }
 
 export default TokenAnnotator
