@@ -1,4 +1,5 @@
 # react-text-annotate
+![NPM](https://img.shields.io/npm/v/react-text-annotate)
 
 A React component for interactively highlighting parts of text.
 
