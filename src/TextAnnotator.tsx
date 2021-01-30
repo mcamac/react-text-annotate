@@ -27,7 +27,7 @@ type TextBaseProps<T> = {
   value: T[]
   onChange: (value: T[]) => any
   getSpan?: (span: TextSpan) => T
-  // TODO: determine whether to overwrite or leave intersecting ranges.
+  isIntersectToHighlightedText?: boolean
 }
 
 type TextAnnotatorProps<T> = React.HTMLAttributes<HTMLDivElement> & TextBaseProps<T>
@@ -55,6 +55,13 @@ const TextAnnotator = <T extends Span>(props: TextAnnotatorProps<T>) => {
 
     if (selectionIsBackwards(selection)) {
       ;[start, end] = [end, start]
+    }
+
+    if (props.isIntersectToHighlightedText) {
+      const splitIndex = props.value.findIndex(s => s.start === start && s.end === end)
+      if (splitIndex >= 0) {
+        return
+      }
     }
 
     props.onChange([...props.value, getSpan({start, end, text: content.slice(start, end)})])

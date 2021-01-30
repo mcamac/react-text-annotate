@@ -26,7 +26,7 @@ export interface TokenAnnotatorProps<T>
   onChange: (value: T[]) => any
   getSpan?: (span: TokenSpan) => T
   renderMark?: (props: MarkProps) => JSX.Element
-  // TODO: determine whether to overwrite or leave intersecting ranges.
+  isIntersectToHighlightedText?: boolean
 }
 
 const TokenAnnotator = <T extends Span>(props: TokenAnnotatorProps<T>) => {
@@ -57,6 +57,13 @@ const TokenAnnotator = <T extends Span>(props: TokenAnnotatorProps<T>) => {
 
     if (selectionIsBackwards(selection)) {
       ;[start, end] = [end, start]
+    }
+
+    if (props.isIntersectToHighlightedText) {
+      const splitIndex = props.value.findIndex(s => s.start >= start && s.end <= end)
+      if (splitIndex >= 0) {
+        return
+      }
     }
 
     end += 1
