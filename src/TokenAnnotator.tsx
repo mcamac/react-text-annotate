@@ -1,5 +1,4 @@
-import React from 'react'
-
+import * as React from 'react'
 import Mark, {MarkProps} from './Mark'
 import {selectionIsEmpty, selectionIsBackwards, splitTokensWithOffsets} from './utils'
 import {Span} from './span'

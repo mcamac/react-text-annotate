@@ -18,7 +18,9 @@
     "@types/react": "^16.8.0",
     "@types/react-dom": "^16.8.0",
     "docz": "^2.2.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.13",
     "gh-pages": "^2.1.1",
+    "html-webpack-plugin": "^5.5.0",
     "jest": "^25.2.7",
     "prettier": "^1.19.1",
     "react": "^16.8.0",
@@ -26,10 +28,11 @@
     "react-hot-loader": "^4.0.1",
     "react-powerplug": "^1.0.0",
     "ts-jest": "^25.3.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "webpack-cli": "^4.10.0"
   },
   "scripts": {
-    "dev": "cd example && webpack-dev-server --hot --history-api-fallback --mode development",
+    "dev": "cd example && webpack server --hot --history-api-fallback --mode development",
     "build": "rm -rf lib && tsc -p ./ --declaration --outDir lib/",
     "prepublish": "npm run build",
     "predeploy": "docz build",
