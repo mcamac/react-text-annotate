@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "module": "commonjs",
     "sourceMap": true,
     "jsx": "react",
-    "lib": ["es2016", "dom"],
-    "esModuleInterop": true
+    "lib": ["es2016", "dom"]
+   
   },
   "include": ["src/**/*"]
 }
